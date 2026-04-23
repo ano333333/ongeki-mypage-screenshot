@@ -23,9 +23,15 @@
             text-decoration: none;
             border-radius: 5px;
             margin: 20px 0;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
         }
         .bookmarklet:hover {
             background: #0052a3;
+        }
+        .bookmarklet.copied {
+            background: #28a745;
         }
         code {
             background: #f4f4f4;
@@ -46,15 +52,37 @@
     <div class="instruction">
         <h2>使い方</h2>
         <ol>
-            <li>下のリンクをブックマークバーにドラッグ&ドロップしてください</li>
+            <li>下のボタンをクリックして、ブックマークレットのコードをコピーしてください</li>
+            <li>ブラウザでブックマークを新規作成し、URLにコピーしたコードを貼り付けてください</li>
             <li>オンゲキのマイページで、作成したブックマークレットをクリックしてください</li>
             <li>スクリーンショットが自動的に撮影されます</li>
         </ol>
     </div>
 
-    <a href="javascript:(function(){document.body.appendChild(document.createElement('script')).src='./main.js';})();" class="bookmarklet">
-        📸 Ongeki Screenshot
-    </a>
+    <button class="bookmarklet" id="copyButton">
+        📸 ブックマークレットをコピー
+    </button>
+
+    <script>
+        const bookmarkletCode = "javascript:MAIN_JS";
+        const button = document.getElementById('copyButton');
+
+        button.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(bookmarkletCode);
+                const originalText = button.textContent;
+                button.textContent = '✅ コピーしました！';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                alert('コピーに失敗しました: ' + err);
+            }
+        });
+    </script>
 
     <h2>説明</h2>
     <p>このブックマークレットは、オンゲキのマイページでスクリーンショットを撮影するためのツールです。</p>

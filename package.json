@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm build:html && pnpm build:bookmarklet",
+    "build": "pnpm build:bookmarklet && pnpm build:html",
     "build:html": "vite build",
     "build:bookmarklet": "vite build --config vite.config.bookmarklet.ts",
     "preview": "vite preview"
