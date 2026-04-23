@@ -85,3 +85,36 @@ This ensures all commands run with the correct Node.js and pnpm versions from th
 2. **Single File Output**: The bookmarklet MUST compile to exactly one file (`main.js`) with all dependencies inlined, as it's loaded dynamically via script injection
 
 3. **GitHub Pages Deployment**: The `dist/` directory contains the deployable artifacts for GitHub Pages
+
+## Commit Guidelines
+
+This project follows the **Angular Commit Convention** with custom component scopes.
+
+### Format
+
+```
+<type>(component): <subject>
+```
+
+### Components
+
+- **playlog** - Changes related only to playlog screenshot functionality
+- **front** - Changes related only to GitHub Pages landing page
+- **(omit component)** - Changes that don't fit the above categories (e.g., docs, general style changes, build config)
+
+### Examples
+
+```bash
+feat(playlog): Add screenshot selection feature
+fix(front): Correct copy button feedback timing
+docs: Update commit guidelines in CLAUDE.md
+style: Format code with Prettier
+refactor(playlog): Extract screenshot logic into separate module
+chore: Update dependencies
+```
+
+### Best Practices
+
+- **Keep commits small** - Avoid mixing different types or components in a single commit
+- Use standard Angular types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, etc.
+- Write clear, concise subject lines in imperative mood
