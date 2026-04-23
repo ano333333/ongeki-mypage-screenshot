@@ -2,10 +2,15 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
-  root: 'src',
   build: {
-    outDir: '../dist',
-    emptyOutDir: true,
+    lib: {
+      entry: resolve(__dirname, 'src/main.ts'),
+      name: 'bookmarklet',
+      fileName: () => 'main.js',
+      formats: ['iife']
+    },
+    outDir: 'dist',
+    emptyOutDir: false,
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -16,8 +21,8 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'src/index.html'),
+      output: {
+        inlineDynamicImports: true,
       },
     },
   },
