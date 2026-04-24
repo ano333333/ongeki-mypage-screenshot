@@ -7,7 +7,9 @@
     "build": "pnpm build:bookmarklet && pnpm build:html",
     "build:html": "vite build",
     "build:bookmarklet": "vite build --config vite.config.bookmarklet.ts",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write . && biome format --write",
+    "lint": "biome lint --write"
   },
   "devDependencies": {
     "terser": "^5.46.2",

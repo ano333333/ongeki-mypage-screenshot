@@ -16,6 +16,8 @@
           buildInputs = with pkgs; [
             nodejs_24
             pnpm
+            biome
+            prettier
           ];
 
           shellHook = ''
