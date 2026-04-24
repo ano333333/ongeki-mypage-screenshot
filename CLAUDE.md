@@ -101,7 +101,8 @@ This project follows the **Angular Commit Convention** with custom component sco
 
 - **playlog** - Changes related only to playlog screenshot functionality
 - **front** - Changes related only to GitHub Pages landing page
-- **(omit component)** - Changes that don't fit the above categories (e.g., docs, general style changes, build config)
+- **ci** - Changes related only to CI/CD such as build configs and GitHub Actions
+- **(omit component)** - Changes that don't fit the above categories (e.g., docs, general style changes)
 
 ### Examples
 
