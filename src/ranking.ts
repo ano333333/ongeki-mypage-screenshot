@@ -1,4 +1,5 @@
 import { captureAndDownload } from "./helpers/captureAndDownload";
+import { createCaptureButton } from "./helpers/createCaptureButton";
 import { deepCloneWithStyles } from "./helpers/deepCloneWithStyles";
 
 export function downloadRanking() {
@@ -30,20 +31,7 @@ export function downloadRanking() {
 	});
 
 	// 2. キャプチャボタンを追加
-	const captureButton = document.createElement("button");
-	captureButton.textContent = "キャプチャする";
-	captureButton.style.position = "fixed";
-	captureButton.style.top = "10px";
-	captureButton.style.left = "10px";
-	captureButton.style.zIndex = "10000";
-	captureButton.style.padding = "10px 20px";
-	captureButton.style.backgroundColor = "#007bff";
-	captureButton.style.color = "white";
-	captureButton.style.border = "none";
-	captureButton.style.borderRadius = "5px";
-	captureButton.style.cursor = "pointer";
-	captureButton.style.fontSize = "16px";
-	captureButton.style.fontWeight = "bold";
+	const captureButton = createCaptureButton();
 
 	captureButton.addEventListener("click", async () => {
 		try {
