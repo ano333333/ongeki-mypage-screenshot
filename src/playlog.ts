@@ -8,7 +8,7 @@ export function downloadPlaylog() {
 		return;
 	}
 
-	// 2. プレイ履歴要素を検索してボタンを差し替え
+	// 2. プレイ履歴要素を検索してタッチ選択を設定する
 	const playlogItems = container.querySelectorAll("div.m_10");
 	if (playlogItems.length === 0) {
 		alert("エラー: プレイ履歴が見つかりません。");
@@ -19,46 +19,13 @@ export function downloadPlaylog() {
 	const selectionStates: boolean[] = new Array(playlogItems.length).fill(false);
 
 	playlogItems.forEach((item, index) => {
-		const submitButton = item.querySelector('button[type="submit"]');
-		if (submitButton) {
-			// 新しいボタンを作成
-			const selectButton = document.createElement("button");
-			selectButton.type = "button";
-
-			const blueGradient =
-				"linear-gradient(rgb(26, 86, 219), rgb(118, 169, 250))";
-			const greenGradient =
-				"linear-gradient(rgb(22, 101, 52), rgb(74, 222, 128))";
-
-			// img の class を取得して p 要素に適用
-			const img = submitButton.querySelector("img");
-			const p = document.createElement("p");
-			p.className = img?.className ?? "f_r h_40 basic_btn";
-			p.style.background = blueGradient;
-			p.style.color = "white";
-			p.style.border = "none";
-			p.style.borderRadius = "5px";
-			p.style.cursor = "pointer";
-			p.style.width = "126.656px";
-			p.style.height = "38px";
-			p.style.display = "flex";
-			p.style.justifyContent = "center";
-			p.style.alignItems = "center";
-			p.textContent = "選択する";
-			selectButton.appendChild(p);
-
-			// クリックハンドラを追加
-			selectButton.addEventListener("click", () => {
-				selectionStates[index] = !selectionStates[index];
-				p.style.background = selectionStates[index]
-					? greenGradient
-					: blueGradient;
-				p.textContent = selectionStates[index] ? "選択済み" : "選択する";
-			});
-
-			// ボタンを差し替え
-			submitButton.parentNode?.replaceChild(selectButton, submitButton);
-		}
+		(item as HTMLElement).style.cursor = "pointer";
+		item.addEventListener("click", () => {
+			selectionStates[index] = !selectionStates[index];
+			(item as HTMLElement).style.background = selectionStates[index]
+				? "rgba(173, 216, 230, 0.5)"
+				: "";
+		});
 	});
 
 	// 3. キャプチャボタンを追加
@@ -105,19 +72,9 @@ export function downloadPlaylog() {
 
 			// 選択済みの要素を追加
 			selectedItems.forEach((item, index) => {
-				const clonedItem = item.cloneNode(true) as Element;
-
-				// 「選択する」ボタンを元の submit ボタンに戻す
-				const selectButton = clonedItem.querySelector('button[type="button"]');
-				if (selectButton) {
-					const submitButton = document.createElement("button");
-					submitButton.type = "submit";
-					const img = document.createElement("img");
-					img.src = "https://ongeki-net.com/ongeki-mobile/img/btn_detail.png";
-					img.className = "f_r h_40 basic_btn";
-					submitButton.appendChild(img);
-					selectButton.parentNode?.replaceChild(submitButton, selectButton);
-				}
+				const clonedItem = item.cloneNode(true) as HTMLElement;
+				clonedItem.style.background = "";
+				clonedItem.style.cursor = "";
 
 				contentDiv.appendChild(clonedItem);
 
