@@ -46,28 +46,35 @@ import html2canvas from "html2canvas";
 				const selectButton = document.createElement("button");
 				selectButton.type = "button";
 
+				const blueGradient =
+					"linear-gradient(rgb(26, 86, 219), rgb(118, 169, 250))";
+				const greenGradient =
+					"linear-gradient(rgb(22, 101, 52), rgb(74, 222, 128))";
+
 				// img の class を取得して p 要素に適用
 				const img = submitButton.querySelector("img");
-				if (img && img.className) {
-					const p = document.createElement("p");
-					p.className = img.className;
-					p.textContent = "選択する";
-					selectButton.appendChild(p);
-				} else {
-					selectButton.textContent = "選択する";
-				}
+				const p = document.createElement("p");
+				p.className = img?.className ?? "f_r h_40 basic_btn";
+				p.style.background = blueGradient;
+				p.style.color = "white";
+				p.style.border = "none";
+				p.style.borderRadius = "5px";
+				p.style.cursor = "pointer";
+				p.style.width = "126.656px";
+				p.style.height = "38px";
+				p.style.display = "flex";
+				p.style.justifyContent = "center";
+				p.style.alignItems = "center";
+				p.textContent = "選択する";
+				selectButton.appendChild(p);
 
 				// クリックハンドラを追加
 				selectButton.addEventListener("click", () => {
 					selectionStates[index] = !selectionStates[index];
-					const p = selectButton.querySelector("p");
-					if (p) {
-						p.textContent = selectionStates[index] ? "選択済み" : "選択する";
-					} else {
-						selectButton.textContent = selectionStates[index]
-							? "選択済み"
-							: "選択する";
-					}
+					p.style.background = selectionStates[index]
+						? greenGradient
+						: blueGradient;
+					p.textContent = selectionStates[index] ? "選択済み" : "選択する";
 				});
 
 				// ボタンを差し替え
