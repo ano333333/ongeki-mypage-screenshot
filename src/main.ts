@@ -119,6 +119,21 @@ import html2canvas from "html2canvas";
 				// 選択済みの要素を追加
 				selectedItems.forEach((item, index) => {
 					const clonedItem = item.cloneNode(true) as Element;
+
+					// 「選択する」ボタンを元の submit ボタンに戻す
+					const selectButton = clonedItem.querySelector(
+						'button[type="button"]',
+					);
+					if (selectButton) {
+						const submitButton = document.createElement("button");
+						submitButton.type = "submit";
+						const img = document.createElement("img");
+						img.src = "https://ongeki-net.com/ongeki-mobile/img/btn_detail.png";
+						img.className = "f_r h_40 basic_btn";
+						submitButton.appendChild(img);
+						selectButton.parentNode?.replaceChild(submitButton, selectButton);
+					}
+
 					contentDiv.appendChild(clonedItem);
 
 					// 最後の要素以外は区切り線を追加
