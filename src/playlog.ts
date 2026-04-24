@@ -1,4 +1,5 @@
 import { captureAndDownload } from "./helpers/captureAndDownload";
+import { deepCloneWithStyles } from "./helpers/deepCloneWithStyles";
 
 export function downloadPlaylog() {
 	// 1. コンテナ要素を取得
@@ -66,29 +67,41 @@ export function downloadPlaylog() {
 			hiddenContainer.style.top = "0";
 			document.body.appendChild(hiddenContainer);
 
-			const contentDiv = document.createElement("div");
-			contentDiv.style.padding = "10px";
-			hiddenContainer.appendChild(contentDiv);
+			// div.m_15 を取得
+			const m15 = document.querySelector("div.m_15");
+			if (!m15) {
+				alert("エラー: キャプチャ対象要素が見つかりません。");
+				document.body.removeChild(hiddenContainer);
+				return;
+			}
 
-			// 選択済みの要素を追加
+			// container3 をディープコピーして内側を選択済みアイテムに差し替え
+			const clonedContainer = deepCloneWithStyles(container);
+			clonedContainer.innerHTML = "";
 			selectedItems.forEach((item, index) => {
-				const clonedItem = item.cloneNode(true) as HTMLElement;
+				const clonedItem = deepCloneWithStyles(item as HTMLElement);
 				clonedItem.style.background = "";
 				clonedItem.style.cursor = "";
-
-				contentDiv.appendChild(clonedItem);
+				clonedContainer.appendChild(clonedItem);
 
 				// 最後の要素以外は区切り線を追加
 				if (index < selectedItems.length - 1) {
 					const clearfix = document.createElement("div");
 					clearfix.className = "clearfix";
-					contentDiv.appendChild(clearfix);
+					clonedContainer.appendChild(clearfix);
 
 					const hr = document.createElement("hr");
 					hr.className = "gray_line";
-					contentDiv.appendChild(hr);
+					clonedContainer.appendChild(hr);
 				}
 			});
+
+			// wrapper 要素を作成し m_15 と container3 を兄弟として追加
+			const wrapper = document.createElement("div");
+			wrapper.className = "wrapper main_wrapper t_c";
+			wrapper.appendChild(deepCloneWithStyles(m15));
+			wrapper.appendChild(clonedContainer);
+			hiddenContainer.appendChild(wrapper);
 
 			const timestamp = new Date()
 				.toISOString()
@@ -96,7 +109,7 @@ export function downloadPlaylog() {
 				.slice(0, -5);
 			const filename = `ongeki-playlog-${timestamp}.png`;
 
-			await captureAndDownload(contentDiv, filename);
+			await captureAndDownload(wrapper, filename);
 
 			// 隠し div を削除
 			document.body.removeChild(hiddenContainer);
