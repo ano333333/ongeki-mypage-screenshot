@@ -35,7 +35,9 @@ export function downloadRanking() {
 
 	captureButton.addEventListener("click", async () => {
 		try {
-			const selectedRows = rows.filter((_, index) => selectionStates[index]);
+			const selectedRows: [number, HTMLTableRowElement][] = rows
+				.map((row, index) => [index, row] as [number, HTMLTableRowElement])
+				.filter(([index]) => selectionStates[index]);
 
 			if (selectedRows.length === 0) {
 				alert("選択された行がありません。");
@@ -75,11 +77,24 @@ export function downloadRanking() {
 				return;
 			}
 			clonedInnerTbody.innerHTML = "";
-			selectedRows.forEach((row) => {
+			let orig_index_before = selectedRows[0][0] - 1;
+			selectedRows.forEach(([orig_index, row]) => {
+				// 直前の追加要素が元表で自分と連続していなければ、省略記号を挿入
+				if (orig_index_before !== orig_index - 1) {
+					const omissionRow = document.createElement("tr");
+					const omissionCell = document.createElement("td");
+					omissionCell.colSpan = row.cells.length;
+					omissionCell.style.textAlign = "center";
+					omissionCell.textContent = "⋮";
+					omissionRow.appendChild(omissionCell);
+					clonedInnerTbody.appendChild(omissionRow);
+				}
+
 				const clonedRow = deepCloneWithStyles(row) as HTMLTableRowElement;
 				clonedRow.style.background = "";
 				clonedRow.style.cursor = "";
 				clonedInnerTbody.appendChild(clonedRow);
+				orig_index_before = orig_index;
 			});
 
 			// wrapper要素を作成し4つを兄弟として追加
