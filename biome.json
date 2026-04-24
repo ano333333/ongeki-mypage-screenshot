@@ -9,10 +9,10 @@
 		"ignoreUnknown": false,
 		"includes": [
 			"**",
-			"!**/node_modules/**",
-			"!**/dist/**",
-			"!**/.vite/**",
-			"!/nix/store/**",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/.vite",
+			"!/nix/store",
 			"!**/package.json",
 			"!**/pnpm-lock.yaml"
 		]
