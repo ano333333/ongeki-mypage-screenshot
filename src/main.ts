@@ -114,6 +114,7 @@ import html2canvas from "html2canvas";
 				document.body.appendChild(hiddenContainer);
 
 				const contentDiv = document.createElement("div");
+				contentDiv.style.padding = "10px";
 				hiddenContainer.appendChild(contentDiv);
 
 				// 選択済みの要素を追加
