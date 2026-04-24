@@ -21,14 +21,14 @@ import html2canvas from "html2canvas";
 		}
 
 		// 2. コンテナ要素を取得
-		const container = document.querySelector("body > div#container3");
+		const container = document.querySelector("div.container3");
 		if (!container) {
 			alert("エラー: コンテナ要素が見つかりません。");
 			return;
 		}
 
 		// 3. プレイ履歴要素を検索してボタンを差し替え
-		const playlogItems = container.querySelectorAll("div#m_10");
+		const playlogItems = container.querySelectorAll("div.m_10");
 		if (playlogItems.length === 0) {
 			alert("エラー: プレイ履歴が見つかりません。");
 			return;
