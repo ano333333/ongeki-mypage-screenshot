@@ -7,28 +7,16 @@ import html2canvas from "html2canvas";
  */
 export async function captureAndDownload(
 	target: HTMLElement,
-	filename: string,
+	_: string,
 ): Promise<void> {
 	const canvas = await html2canvas(target);
-
-	const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 	await new Promise<void>((resolve) => {
 		canvas.toBlob((blob) => {
 			if (blob) {
+				// FIXME: 使用デバイスがiOSか否かでwindow.openとダウンロードを分ける(user agentによる判別がうまくいかなかった)
 				const url = URL.createObjectURL(blob);
-				if (isIOS) {
-					window.open(url, "_blank");
-				} else {
-					const a = document.createElement("a");
-					a.href = url;
-					a.download = filename;
-					a.style.display = "none";
-					document.body.appendChild(a);
-					a.click();
-					document.body.removeChild(a);
-					URL.revokeObjectURL(url);
-				}
+				window.open(url, "_blank");
 			}
 			resolve();
 		});
