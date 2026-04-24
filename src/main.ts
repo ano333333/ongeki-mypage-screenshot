@@ -1,5 +1,6 @@
 // Bookmarklet entry point
 import { downloadPlaylog } from "./playlog";
+import { downloadRanking } from "./ranking";
 
 (() => {
 	try {
@@ -12,9 +13,15 @@ import { downloadPlaylog } from "./playlog";
 			)
 		) {
 			downloadPlaylog();
+		} else if (
+			window.location.href.startsWith(
+				"https://ongeki-net.com/ongeki-mobile/ranking/musicRankingDetail/",
+			)
+		) {
+			downloadRanking();
 		} else {
 			alert(
-				"エラー: このページでは使用できません。プレイ履歴ページで起動してください。",
+				"エラー: このページでは使用できません。プレイ履歴またはランキング詳細ページで起動してください。",
 			);
 		}
 	} catch (error) {
