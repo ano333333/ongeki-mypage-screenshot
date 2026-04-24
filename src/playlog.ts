@@ -1,4 +1,4 @@
-import html2canvas from "html2canvas";
+import { captureAndDownload } from "./helpers/captureAndDownload";
 
 export function downloadPlaylog() {
 	// 1. コンテナ要素を取得
@@ -133,35 +133,19 @@ export function downloadPlaylog() {
 				}
 			});
 
-			// html2canvas でキャプチャ
-			const canvas = await html2canvas(contentDiv);
-
-			// 画像をダウンロード
 			const timestamp = new Date()
 				.toISOString()
 				.replace(/[:.]/g, "-")
 				.slice(0, -5);
 			const filename = `ongeki-playlog-${timestamp}.png`;
 
-			canvas.toBlob((blob) => {
-				if (blob) {
-					const url = URL.createObjectURL(blob);
-					const a = document.createElement("a");
-					a.href = url;
-					a.download = filename;
-					a.style.display = "none";
-					document.body.appendChild(a);
-					a.click();
-					document.body.removeChild(a);
-					URL.revokeObjectURL(url);
-				}
+			await captureAndDownload(contentDiv, filename);
 
-				// 隠し div を削除
-				document.body.removeChild(hiddenContainer);
+			// 隠し div を削除
+			document.body.removeChild(hiddenContainer);
 
-				// 4. ページをリロード
-				window.location.reload();
-			});
+			// 4. ページをリロード
+			window.location.reload();
 		} catch (error) {
 			const errorMessage = `キャプチャ中にエラーが発生しました: ${error instanceof Error ? error.message : String(error)}`;
 			alert(errorMessage);
