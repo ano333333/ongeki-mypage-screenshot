@@ -59,6 +59,7 @@ nix develop --command pnpm add <package>      # Add a package
 This ensures all commands run with the correct Node.js and pnpm versions from the Nix environment.
 
 **Package Management Rules**:
+
 - `pnpm add <package> --save-dev`: Adding to devDependencies is allowed without user approval
 - `pnpm add <package>`: Adding to dependencies requires user approval to minimize bundle size (affects bookmarklet code size)
 
