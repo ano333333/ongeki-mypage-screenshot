@@ -35,11 +35,11 @@ export function downloadPlaylog() {
 
 	captureButton.addEventListener("click", async () => {
 		try {
-			// 選択済みの要素を集める
-			const selectedItems: Element[] = [];
+			// 選択済みの要素を集める([元表でのindex, 要素][])
+			const selectedItems: [number, Element][] = [];
 			playlogItems.forEach((item, index) => {
 				if (selectionStates[index]) {
-					selectedItems.push(item);
+					selectedItems.push([index, item]);
 				}
 			});
 
@@ -66,7 +66,20 @@ export function downloadPlaylog() {
 			// container3 をディープコピーして内側を選択済みアイテムに差し替え
 			const clonedContainer = deepCloneWithStyles(container);
 			clonedContainer.innerHTML = "";
-			selectedItems.forEach((item, index) => {
+			let orig_index_before = selectedItems[0][0] - 1;
+			selectedItems.forEach(([orig_index, item], index) => {
+				// 直前の追加要素が元表で自分と連続していなければ、省略記号を挿入
+				if (orig_index_before !== orig_index - 1) {
+					const omissionElement = document.createElement("div");
+					omissionElement.style.textAlign = "center";
+					omissionElement.innerHTML = "⋮";
+					clonedContainer.appendChild(omissionElement);
+
+					const hr = document.createElement("hr");
+					hr.className = "gray_line";
+					clonedContainer.appendChild(hr);
+				}
+
 				const clonedItem = deepCloneWithStyles(item as HTMLElement);
 				clonedItem.style.background = "";
 				clonedItem.style.cursor = "";
@@ -82,6 +95,7 @@ export function downloadPlaylog() {
 					hr.className = "gray_line";
 					clonedContainer.appendChild(hr);
 				}
+				orig_index_before = orig_index;
 			});
 
 			// wrapper 要素を作成し m_15 と container3 を兄弟として追加
