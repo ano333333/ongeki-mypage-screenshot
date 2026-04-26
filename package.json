@@ -4,9 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm build:bookmarklet && pnpm build:html",
+    "build": "rm -rf dist && pnpm build:bookmarklet && pnpm build:embed && pnpm build:html",
+    "build:local": "rm -rf dist && pnpm build:bookmarklet && NODE_ENV=development pnpm build:embed && pnpm build:html",
     "build:html": "vite build",
     "build:bookmarklet": "vite build --config vite.config.bookmarklet.ts",
+    "build:embed": "vite build --config vite.config.embed.ts",
     "preview": "vite preview",
     "format": "prettier --write . && biome format --write",
     "lint": "biome lint --write"

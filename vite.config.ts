@@ -38,18 +38,18 @@ export default defineConfig({
 			enforce: "post",
 			transformIndexHtml(html) {
 				try {
-					// dist/main.js を読み込む
-					const mainJsPath = resolve(__dirname, "dist/main.js");
-					const mainJsContent = readFileSync(mainJsPath, "utf-8");
+					// dist/embed.js を読み込む
+					const embedJsPath = resolve(__dirname, "dist/embed.js");
+					const embedJsContent = readFileSync(embedJsPath, "utf-8");
 
 					// エスケープ (javascript: プレフィックスは既に HTML にある)
-					const escapedContent = encodeURIComponent(mainJsContent);
+					const escapedContent = encodeURIComponent(embedJsContent);
 
 					// HTML 内の MAIN_JS を置換
 					return html.replace("MAIN_JS", escapedContent);
 				} catch (error) {
 					console.warn(
-						"Warning: Could not read dist/main.js, using placeholder",
+						"Warning: Could not read dist/embed.js, using placeholder",
 					);
 					return html;
 				}
