@@ -11,14 +11,11 @@ export async function captureAndDownload(
 ): Promise<void> {
 	const canvas = await html2canvas(target);
 
-	await new Promise<void>((resolve) => {
-		canvas.toBlob((blob) => {
-			if (blob) {
-				// FIXME: 使用デバイスがiOSか否かでwindow.openとダウンロードを分ける(user agentによる判別がうまくいかなかった)
-				const url = URL.createObjectURL(blob);
-				window.open(url, "_blank");
-			}
-			resolve();
-		});
-	});
+	const dataUrl = canvas.toDataURL("image/png");
+	const newWindow = window.open();
+	if (newWindow) {
+		newWindow.document.write(`<img src="${dataUrl}" style="width:100%;">`);
+	} else {
+		alert("ポップアップがブロックされました。設定を許可してください。");
+	}
 }
