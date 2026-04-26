@@ -8,35 +8,54 @@ This is a bookmarklet project for taking screenshots on the Ongeki MyPage. It us
 
 ## Build System Architecture
 
-This project uses a **dual-build system** with two separate Vite configurations:
+This project uses a **triple-build system** with three separate Vite configurations:
 
 1. **vite.config.ts** - Builds the GitHub Pages landing page (`src/index.html` → `dist/index.html`)
    - Root is set to `src/` directory
    - Outputs HTML with inline styles and scripts
+   - Reads `dist/embed.js` and injects it as the bookmarklet code (URL-encoded)
 
-2. **vite.config.bookmarklet.ts** - Builds the bookmarklet script (`src/main.ts` → `dist/main.js`)
+2. **vite.config.bookmarklet.ts** - Builds the main bookmarklet script (`src/main.ts` → `dist/main.js`)
    - Uses Vite's library mode with IIFE format
    - Minifies with Terser (preserving console logs, removing comments)
-   - **Critical**: `emptyOutDir: false` to avoid deleting the HTML built in step 1
-   - Outputs a single-file JavaScript bundle with all imports inlined
+   - `emptyOutDir: false` to avoid deleting other build outputs
+   - Outputs a single-file JavaScript bundle with all dependencies inlined
 
-The builds run sequentially via `pnpm build`, which executes both configurations in order.
+3. **vite.config.embed.ts** - Builds the lightweight embed script (`src/embed.ts` → `dist/embed.js`)
+   - Uses Vite's library mode with IIFE format
+   - Injects a `<script src="...">` tag pointing to `main.js` into the target page's `<head>`
+   - The URL for `main.js` is baked in at build time via `VITE_MAIN_JS_URL`:
+     - `pnpm build` → GitHub Pages URL (`https://ano333333.github.io/ongeki-mypage-screenshot/main.js`)
+     - `pnpm build:local` → Local preview URL (`http://localhost:4173/main.js`)
+
+The builds run sequentially. `pnpm build` and `pnpm build:local` both start with `rm -rf dist` to clean the output directory.
 
 ## Development Commands
 
 ### Building
 
 ```bash
-pnpm build              # Full build (HTML + bookmarklet)
+pnpm build              # Full build for production (embed.js points to GitHub Pages)
+pnpm build:local        # Full build for local testing (embed.js points to localhost:4173)
 pnpm build:html         # Build only the landing page
-pnpm build:bookmarklet  # Build only the bookmarklet script
+pnpm build:bookmarklet  # Build only the main bookmarklet script
+pnpm build:embed        # Build only the embed script (uses NODE_ENV to select URL)
 ```
 
 ### Development
 
 ```bash
-pnpm dev                # Start Vite dev server (for landing page)
-pnpm preview            # Preview the production build
+pnpm dev                # Start Vite dev server (for landing page only)
+pnpm preview            # Serve production build at localhost:4173
+```
+
+### Local testing workflow
+
+```bash
+pnpm build:local        # Build with embed.js pointing to localhost:4173/main.js
+pnpm preview            # Serve dist/ at localhost:4173
+xdg-open dist/index.html  # Open landing page in browser
+# Copy the bookmarklet, run it on ongeki-net.com — main.js loads from localhost:4173
 ```
 
 ### Nix Environment
@@ -70,22 +89,30 @@ This ensures all commands run with the correct Node.js and pnpm versions from th
 - Contains a copy-to-clipboard button that copies the bookmarklet code
 - Uses `navigator.clipboard.writeText()` to copy the JavaScript code
 - Provides visual feedback when copy succeeds (button turns green for 2 seconds)
-- The bookmarklet code dynamically loads `main.js` by injecting a script tag
+- The bookmarklet code is `dist/embed.js` (URL-encoded), injected by the `inject-bookmarklet` plugin in `vite.config.ts`
+
+### Embed script (embed.ts)
+
+- Lightweight IIFE that injects a `<script>` tag into the target page's `<head>`
+- The `src` URL is baked in at build time (`VITE_MAIN_JS_URL`)
+- This is what users copy as the bookmarklet — kept as small as possible
 
 ### Bookmarklet (main.ts)
 
-- Entry point for the bookmarklet functionality
+- Entry point for the actual screenshot functionality
 - Must be written as an IIFE (Immediately Invoked Function Expression)
 - Gets minified to a single line in `dist/main.js`
-- Loaded dynamically when the bookmarklet is clicked
+- Loaded dynamically by `embed.js` when the bookmarklet is clicked
 
 ## Important Constraints
 
-1. **Build Order Matters**: `build:html` must run before `build:bookmarklet` because the bookmarklet config has `emptyOutDir: false`
+1. **Build Order Matters**: `build:bookmarklet` → `build:embed` → `build:html` must run in this order. `build:html` reads `dist/embed.js` to inject into the landing page.
 
-2. **Single File Output**: The bookmarklet MUST compile to exactly one file (`main.js`) with all dependencies inlined, as it's loaded dynamically via script injection
+2. **Single File Output**: `main.js` MUST compile to exactly one file with all dependencies inlined, as it is loaded dynamically via script injection.
 
-3. **GitHub Pages Deployment**: The `dist/` directory contains the deployable artifacts for GitHub Pages
+3. **emptyOutDir**: All three configs use `emptyOutDir: false`. The full `dist/` clean is done by `rm -rf dist` at the start of `pnpm build` and `pnpm build:local`.
+
+4. **GitHub Pages Deployment**: The `dist/` directory contains the deployable artifacts for GitHub Pages.
 
 ## Commit Guidelines
 
